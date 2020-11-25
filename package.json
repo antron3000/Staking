@@ -1,0 +1,22 @@
+{
+  "name": "staking",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antron3000/Staking.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/antron3000/Staking/issues"
+  },
+  "homepage": "https://github.com/antron3000/Staking#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
