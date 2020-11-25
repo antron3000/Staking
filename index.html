@@ -1,57 +1,38 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js" type="text/javascript">
-    </script>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js" type="text/javascript"></script>
     <script src="index.js"></script>
     <link rel="stylesheet" href="style.css">
-
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
   </head>
+
   <body>
-    <!-- <h3>Sign In</h3>
-    <button onclick="init()">Sign In With Metamask</button>
-    <h3>Balances<h3>
-    <label id = "EthBalanceLabel"></label><br>
-    <label id = "AmountDeposited"></label><br>
-    <label id = "BalanceLabel"></label><br>
-    <h3>Deposit</h3>
-    <input id="amountToDeposit" placeholder = "amount..."></input><button onclick="deposit()">Deposit</button> <br>
-    <h3>Withdraw</h3>
-    <input id="amountToWithdraw" placeholder = "amount..."></input><button onclick="withdraw()">Withdraw</button> <br>
-    <h3>Staking Pool Info</h3>
-    <label id="refundDeadline"></label> <br>
-    <label id="numValidators"></label> <br>
-    <label id="remainingValidatorShares"></label> <br>
+    <div id="infobar">
+        <button id="signin-button" onclick="init()">Sign In</button>
+    </div>
 
-    <hr> -->
-<div class = "div">
-    <br><br>
-    <button class = "button" onclick="init()">SIGN IN</button>
-    <br><br>
-</div>
-<br><br>
-<div class = "div">
-    <h3>
-        <label class = "label" id = "YouHave"></label> <br><br>
-        <label class = "label" id = "EthBalanceLabel"></label><br>
-        <label class = "label" id = "BalanceLabel"></label><br>
-    </h3>
+    <div class="card">
+      <div id="balancesContainer">
+        <h2 id="balancesHeader">You have:</h2>
 
+        <p class="balance-info" id="ethBalance"></p>
+        <p class="balance-info" id="bethBalance"></label>
+      </div>
 
-    <input class = "input" id="amountToDeposit" placeholder = "0.0"></input><br><button class = "button" onclick="deposit()">DEPOSIT</button> <br>
-    <input class = "input" id="amountToWithdraw" placeholder = "0.0"></input><br><button class = "button" onclick="withdraw()">WITHDRAW</button>
-    <br><br>
-</div>
-<br><br>
-<div>
-    <h2>INFO</h2>
-    <h3>
-      <label class = "label" id="remainingValidatorShares"></label> <br> <br>
-      <label class = "label" id="refundDeadline"></label> <br>
-    </h3>
-</div>
+      <input id="amountToDeposit" placeholder="0.0" type=number></input><button class="form-button" id="depositButton" onclick="deposit()">Deposit</button> <br>
+      <input id="amountToWithdraw" placeholder="0.0" type=number></input><button class="form-button" onclick="withdraw()">Withdraw</button>
+    </div>
 
+    <div class="card">
+        <h2 id="infoHeader">Info</h2>
 
+        <hr/>
+
+        <p class="info-line" id="remainingValidatorShares"></p>
+        <p class="info-line" id="refundDeadline"></p>
+    </div>
   </body>
-
 </html>

@@ -1,50 +1,154 @@
 body {
-  background-color: #f8f8f8;
-  display:flex;
-  flex-direction:column;
+  margin: 70px 0 0 0;
+
+  background-color: #E6E8E6;
 }
 
-h2 {
+#infobar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 50px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  justify-content: center;
+
+  padding: 10px;
+
+  background-color: #DE6449;
+}
+
+#signin-button {
+  width: 15%;
+
+  font-family: "Roboto", sans-serif;
+  font-size: 1.1em;
+  color: #E6E8E6;
+
+  background-color: #DE6449;
+  border: 1px solid #FFFFFF; 
+  border-radius: 5px;
+
+  cursor: pointer;
+}
+
+#signin-button:hover {
+  color: #DE6449;
+
+  background-color: #FFFFFF;
+}
+
+.card {
+  margin: 20px 20%;
+
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+
+  padding: 20px;
+
+  background-color: #FFFFFF;
+  border-radius: 5px;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.10);
+}
+
+#balancesContainer {
+  display: none;
+}
+
+#balancesHeader {
+  margin: 0;
+
+  font-family: "Roboto", sans-serif;
   text-align: center;
-  justify-content:center;
-  color: black;
 }
 
-h3 {
+.balance-info {
+  font-family: "Roboto", sans-serif;
+  font-size: 1.2em;
   text-align: center;
-  justify-content:center;
-  color: #cc9933;
 }
 
-.label{
-  font-size:24px;
+#ethBalance {
+  margin: 10px 0 0 0;
 }
 
-.button {
-  background-color: grey;
-  height: 150px;
-  margin-right: 30px;
-  margin-left: 30px;
-  color: white;
-  font: Verdana;
-  font-size: 24px;
+#bethBalance {
+  margin: 0 0 15px 0;
 }
 
-.input {
-  height: 150px;
-  font-size:24px;
-  margin-right: 30px;
-  margin-left: 30px;
+input {
+  height: 50px;
+
+  font-family: "Roboto", sans-serif;
+  font-size: 1.5em;
+  text-align: center;
+
+  border: 2px solid #DE6449;
+  border-radius: 5px;
 }
 
-div {
-  background-color: white;
-  display:flex;
-  flex-direction:column;
-  border: 5px solid black;
+.form-button {
+  margin-top: 10px;
+
+  height: 30px;
+
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #FFFFFF;
+
+  background-color: #DE6449;
+  border: none;
+  border-radius: 5px;
+
+  cursor: pointer;
 }
 
-p {
-  font-family: verdana;
-  font-size: 20px;
+#depositButton {
+  margin-bottom: 10px;
+}
+
+#infoHeader {
+  margin: 0;
+
+  font-family: "Roboto", sans-serif;
+  text-align: center;
+}
+
+hr {
+  margin-bottom: 10px;
+
+  width: 100%;
+
+  border: none;
+  border-top: 2px solid #E0E0E0;
+}
+
+.info-line {
+  margin: 0;
+
+  font-family: "Roboto", sans-serif;
+  font-size: 0.9em;
+}
+
+@media only screen and (max-width: 600px) {
+  #signin-button {
+    width: 100%;
+
+    color: #DE6449;
+
+    background-color: #E6E8E6;
+  }
+
+  .card {
+    margin: 20px 20px;
+  }
 }

@@ -1028,17 +1028,18 @@ async function init() {
 
 }
 
-async function displayBalances() {
-	document.getElementById("YouHave").innerHTML = "You Have: "
+async function displayBalances() {	
+  document.getElementById("balancesContainer").style.display = "block";
+
   let ethBalance = await provider.getBalance(signer._address)
   ethBalance = ethers.utils.formatEther(ethBalance)
-  document.getElementById("EthBalanceLabel").innerHTML = ethBalance + " ETH"
+  document.getElementById("ethBalance").innerHTML = ethBalance + " ETH"
 
 
   let balance = await token.balanceOf(signer._address)
   balance = ethers.utils.formatUnits(balance,decimals)
   balance = ethers.utils.commify(balance)
-  document.getElementById("BalanceLabel").innerHTML = balance + " " + symbol
+  document.getElementById("bethBalance").innerHTML = balance + " " + symbol
 }
 
 async function deposit() {
