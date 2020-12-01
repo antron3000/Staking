@@ -547,7 +547,7 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
 
         u.burn(msg.sender, amount);
         address payable sender = msg.sender;
-        sender.transfer(amount);
+        sender.transfer(amountEth);
     }
 
 
@@ -563,9 +563,9 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
             // depositContract.deposit.value(32)(pubkey, withdrawal_credentials, signature, deposit_data_root);
     }
 
-    function repayStake(uint256 amount, uint numValidators) public payable onlyOwner{
+    function repayStake(uint256 amount, uint _numValidators) public payable onlyOwner{
         require(msg.value==amount);
-        withdrawable += numValidators.mul(32e18);
+        withdrawable += _numValidators.mul(32e18);
     }
 
 
