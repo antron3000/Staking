@@ -2,7 +2,7 @@ let provider
 let signer
 
 
-let contractAddress = "0x9FEC7Dc40a3167d6971B0cFAb48841e00dBE2c26"
+let contractAddress = "0xD63b468419F3DBfC764db8fF99867c261a06f3C3"
 let contractABI = [
 	{
 		"inputs": [
@@ -339,7 +339,7 @@ let contractABI = [
 ]
 let contract
 
-let tokenAddress = "0x59F9e6E5e495F2fB259963DeC5BA56CFBd5846e7"
+let tokenAddress = "0xB25b9a6cb8E381f4E10bA419b97E54d13cED88d5"
 let tokenABI = [
 	{
 		"inputs": [
@@ -1028,7 +1028,7 @@ async function init() {
 
 }
 
-async function displayBalances() {	
+async function displayBalances() {
   document.getElementById("balancesContainer").style.display = "block";
 
   let ethBalance = await provider.getBalance(signer._address)
