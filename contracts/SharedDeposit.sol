@@ -119,7 +119,7 @@ contract uStakeEth {
     string public constant name = "uStake Eth";
 
     /// @notice EIP-20 token symbol for this token
-    string public constant symbol = "staked ETH";
+    string public constant symbol = "Staked ETH";
 
     /// @notice EIP-20 token decimals for this token
     uint8 public constant decimals = 18;
@@ -129,9 +129,6 @@ contract uStakeEth {
 
     /// @notice Address which may mint new tokens
     address public minter;
-
-    /// @notice The timestamp after which minting may occur
-    uint public mintingAllowedAfter;
 
     /// @notice Minimum time between mints
     // Flash mint protection
@@ -158,7 +155,6 @@ contract uStakeEth {
     constructor() public {
         minter = msg.sender;
         emit MinterChanged(address(0), minter);
-        mintingAllowedAfter = block.timestamp;
     }
 
     /**
@@ -178,11 +174,7 @@ contract uStakeEth {
      */
     function mint(address dst, uint rawAmount) external {
         require(msg.sender == minter, "Uni::mint: only the minter can mint");
-        require(block.timestamp >= mintingAllowedAfter, "Uni::mint: minting not allowed yet");
         require(dst != address(0), "Uni::mint: cannot transfer to the zero address");
-
-        // record the mint
-        mintingAllowedAfter = SafeMath.add(block.timestamp, minimumTimeBetweenMints);
 
         // mint the amount
         uint96 amount = safe96(rawAmount, "Uni::mint: amount exceeds 96 bits");
@@ -201,10 +193,8 @@ contract uStakeEth {
 
     function burn(address src, uint rawAmount) external {
         require(msg.sender == minter, "Uni::burn: only the minter can burn");
-        require(block.timestamp >= mintingAllowedAfter, "Uni::burn: minting not allowed yet");
         uint96 amount = safe96(rawAmount, "Uni::burn: amount exceeds 96 bits");
         require(amount <= totalSupply, "Uni::burn: exceededed total supply");
-        mintingAllowedAfter = SafeMath.add(block.timestamp, minimumTimeBetweenMints);
 
         totalSupply = safe96(SafeMath.sub(totalSupply, amount), "Uni::burn: totalSupply exceeds 96 bits");
 
@@ -497,35 +487,39 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
     uint256 public adminFeeN; //admin Fee Numerator
     uint256 public adminFeeD; //admin Fee Denominator
 
+    uint public depositable;
     uint public withdrawable;
 
     bool public poolFull;
 
-    uStakeEth u;
+    uStakeEth public u;
 
-    constructor(uint256 _numValidators,uint256 _adminFeeD, uint256 _adminFeeN) public {
+    constructor(uint256 _numValidators,uint256 _adminFeeN, uint256 _adminFeeD) public {
         u = new uStakeEth();
 
-        depositContract = IDepositContract(depositContractAddress);
-
-        adminFeeD = _adminFeeD;
         adminFeeN = _adminFeeN;
+        adminFeeD = _adminFeeD;
 
         ValidatorsUnderManagement = _numValidators;
+
+        depositContract = IDepositContract(depositContractAddress);
+        depositable = ValidatorsUnderManagement*32e18;
     }
 
     // USER INTERACTIONS
     function deposit() public payable nonReentrant {
-        require(!poolFull,"not enough room left in pool");
-        uint fee = msg.value.mul(adminFeeN).div(adminFeeD);
-        require(fee>0,"deposit size too small");
+        require(!poolFull,"Pool is Full");
+        require(msg.value<=depositable,"not enough room left in pool");
+        uint fee = (msg.value.mul(adminFeeN)).div(adminFeeD);
 
         uint value = msg.value.sub(fee);
 
         u.mint(msg.sender, value);
         u.mint(owner(),fee);
 
-        if(getDepositable()==0){
+        depositable = depositable.sub(msg.value);
+
+        if(depositable==0){
             poolFull = true;
         }
     }
@@ -564,9 +558,5 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
     function setAdminFee(uint256 _adminFeeN,uint256 _adminfeeD) external onlyOwner {
         adminFeeN = _adminFeeN;
         adminFeeD = _adminfeeD;
-    }
-
-    function getDepositable() public view returns(uint256){
-        return(ValidatorsUnderManagement*32e18-address(this).balance);
     }
 }
