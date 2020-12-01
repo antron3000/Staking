@@ -289,8 +289,6 @@ contract uStakeEth {
         return true;
     }
 
-
-
     function _transferTokens(address src, address dst, uint96 amount) internal {
         require(src != address(0), "Uni::_transferTokens: cannot transfer from the zero address");
         require(dst != address(0), "Uni::_transferTokens: cannot transfer to the zero address");
@@ -299,8 +297,6 @@ contract uStakeEth {
         balances[dst] = add96(balances[dst], amount, "Uni::_transferTokens: transfer amount overflows");
         emit Transfer(src, dst, amount);
     }
-
-
 
     function safe32(uint n, string memory errorMessage) internal pure returns (uint32) {
         require(n < 2**32, errorMessage);
@@ -450,8 +446,6 @@ contract Ownable {
     }
 }
 
-
-
 /**
  * @dev Contract module that helps prevent reentrant calls to a function.
  *
@@ -489,8 +483,6 @@ contract ReentrancyGuard {
     }
 }
 
-
-
 contract SharedDeposit is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeMath for uint;
@@ -510,7 +502,6 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
 
     uStakeEth u;
 
-
     constructor(uint256 _numValidators,uint256 _adminFeeD, uint256 _adminFeeN) public {
         u = new uStakeEth();
 
@@ -524,7 +515,7 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
 
     // USER INTERACTIONS
     function deposit() public payable nonReentrant {
-        require(msg.value<=getDepositable(),"not enough room left in pool");
+        require(!poolFull,"not enough room left in pool");
         uint fee = msg.value.mul(adminFeeN).div(adminFeeD);
         require(fee>0,"deposit size too small");
 
@@ -550,7 +541,6 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
         sender.transfer(amountEth);
     }
 
-
     // OWNER ONLY FUNCTIONS
     function depositToEth2(bytes calldata pubkey,
         bytes calldata withdrawal_credentials,
@@ -567,7 +557,6 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
         require(msg.value==amount);
         withdrawable += _numValidators.mul(32e18);
     }
-
 
     function setAdminFee(uint256 _adminFeeN,uint256 _adminfeeD) external onlyOwner {
         adminFeeN = _adminFeeN;
