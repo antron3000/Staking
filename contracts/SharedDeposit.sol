@@ -491,7 +491,8 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
 
     IDepositContract depositContract;
 
-    uint256 public numValidators;
+    uint256 public ValidatorsUnderManagement;
+    uint256 public validatorStakesRepayed;
 
     uint256 public adminFeeN; //admin Fee Numerator
     uint256 public adminFeeD; //admin Fee Denominator
@@ -510,7 +511,7 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
         adminFeeD = _adminFeeD;
         adminFeeN = _adminFeeN;
 
-        numValidators = _numValidators;
+        ValidatorsUnderManagement = _numValidators;
     }
 
     // USER INTERACTIONS
@@ -553,9 +554,11 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
             // depositContract.deposit.value(32)(pubkey, withdrawal_credentials, signature, deposit_data_root);
     }
 
-    function repayStake(uint256 amount, uint _numValidators) public payable onlyOwner{
+    function repayStake(uint256 amount, uint numValidatorStakes) public payable onlyOwner{
         require(msg.value==amount);
-        withdrawable += _numValidators.mul(32e18);
+        require(validatorStakesRepayed+numValidatorStakes<=ValidatorsUnderManagement, "Trying to repay too many validators");
+        withdrawable += numValidatorStakes.mul(32e18);
+        validatorStakesRepayed += numValidatorStakes;
     }
 
     function setAdminFee(uint256 _adminFeeN,uint256 _adminfeeD) external onlyOwner {
@@ -564,6 +567,6 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
     }
 
     function getDepositable() public view returns(uint256){
-        return(numValidators*32e18-address(this).balance);
+        return(ValidatorsUnderManagement*32e18-address(this).balance);
     }
 }
