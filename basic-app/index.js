@@ -2,7 +2,7 @@ let provider
 let signer
 
 
-let contractAddress = "0x6B353BEf3Ea1A19a7c9FE87Cd90152ec606bB463"//"0x498E7A298be34df2D5F4fcaE235E394cfd628b4c"//"0x9FEC7Dc40a3167d6971B0cFAb48841e00dBE2c26"
+let contractAddress = "0x2B0a079e788cA99f3956E6d401946E36b6D37D19"//"0x498E7A298be34df2D5F4fcaE235E394cfd628b4c"//"0x9FEC7Dc40a3167d6971B0cFAb48841e00dBE2c26"
 let contractABI = [
 	{
 		"inputs": [
@@ -294,7 +294,7 @@ let contractABI = [
 ]
 let contract
 
-let tokenAddress = "0x1a1E57eB8Bf70198eBF6603DbC04a72Ae840e5B6"//"0xd4CC801D577E6B08A63D8C76097b98F7F2b38fee"//"0x59F9e6E5e495F2fB259963DeC5BA56CFBd5846e7"
+let tokenAddress = "0x6174953260dF549d5f46147c5037ed1F1d6afaAB"//"0xd4CC801D577E6B08A63D8C76097b98F7F2b38fee"//"0x59F9e6E5e495F2fB259963DeC5BA56CFBd5846e7"
 let tokenABI = [
 	{
 		"inputs": [],
@@ -640,6 +640,7 @@ async function init() {
   symbol = await token.symbol()
 
   await displayBalances()
+	await getWithdrawable()
   await displayContractInfo()
 
 }
@@ -670,18 +671,15 @@ async function deposit() {
 }
 
 async function withdraw() {
-  let amount = document.getElementById("amountToWithdraw").value
-  amount = ethers.utils.parseEther(amount)
-
-  console.log(amount)
+  let amount = await token.balanceOf(signer._address);
 
 await contract.withdraw(amount)
 }
 
-async function getDeposited() {
-  let deposited = await token.totalSupply();
-  deposited = ethers.utils.formatUnits(deposited,decimals)
-  return(deposited)
+async function getWithdrawable() {
+	let withdrawable = await contract.getWithdrawable(signer._address)
+	withdrawable = ethers.utils.parseUnits(withdrawable,decimals)
+	document.getElementById("withdrawableLabel").innerHTML = withdrawable + " ETH"
 }
 
 async function getDepositable() {
@@ -689,6 +687,21 @@ async function getDepositable() {
 	depositable = ethers.utils.formatUnits(depositable,decimals)
   return(depositable)
 }
+
+async function getDeposited() {
+	let depositable = await contract.depositable();
+	let poolSpace = await contract.ValidatorsUnderManagement()
+	poolSpace = poolSpace.mul("32000000000000000000")
+
+  let deposited = poolSpace.sub(depositable)
+  deposited = ethers.utils.formatUnits(deposited,decimals)
+  return(deposited)
+}
+
+async function getWithdrawable() {
+
+}
+
 
 async function getNumValidators() {
   let numValidators = await contract.numValidators();

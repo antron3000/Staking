@@ -39,8 +39,10 @@
 
 
     <input class = "input" id="amountToDeposit" placeholder = "0.0"></input><br><button class = "button" onclick="deposit()">DEPOSIT</button> <br>
-    <button class = "button" onclick="populateMaxDeposit()">MAX</button> <br>
-    <input class = "input" id="amountToWithdraw" placeholder = "0.0"></input><br><button class = "button" onclick="withdraw()">WITHDRAW</button>
+    <button class = "button" onclick="populateMaxDeposit()">MAX</button> <br><br><br>
+    <button class = "button" onclick="withdraw()">WITHDRAW</button><br>
+    <label class = "label" id = "withdrawableLabel"></label><br>
+
     <br><br>
 </div>
 <br><br>
@@ -52,6 +54,9 @@
       <label class = "label" id="poolFull"></label> <br><br>
       <label class = "alabel"><a id="contractLink">Shared Deposit Contract</a></label><br><br>
 
+      <label class = "label" id="numValidators"></label> <br><br>
+      <label class = "label" id="poolStatus"></label> <br><br>
+      <label class = "label" id="validatorsRepayed"></label> <br><br>
 
 
     </h3>
