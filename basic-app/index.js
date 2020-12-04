@@ -2,43 +2,59 @@ let provider
 let signer
 
 
-let contractAddress = "0x2B0a079e788cA99f3956E6d401946E36b6D37D19"//"0x498E7A298be34df2D5F4fcaE235E394cfd628b4c"//"0x9FEC7Dc40a3167d6971B0cFAb48841e00dBE2c26"
+let contractAddress = "0xEa3AB61d7c8464a0b2d697838Fd24dc7510aF004"//"0x498E7A298be34df2D5F4fcaE235E394cfd628b4c"//"0x9FEC7Dc40a3167d6971B0cFAb48841e00dBE2c26"
 let contractABI = [
+	{
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_numValidators",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_adminFeeN",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_adminFeeD",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
 	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "bytes",
-				"name": "pubkey",
-				"type": "bytes"
+				"internalType": "address",
+				"name": "depositor",
+				"type": "address"
 			},
 			{
 				"indexed": false,
-				"internalType": "bytes",
-				"name": "withdrawal_credentials",
-				"type": "bytes"
-			},
-			{
-				"indexed": false,
-				"internalType": "bytes",
+				"internalType": "uint256",
 				"name": "amount",
-				"type": "bytes"
+				"type": "uint256"
 			},
 			{
 				"indexed": false,
-				"internalType": "bytes",
-				"name": "signature",
-				"type": "bytes"
-			},
-			{
-				"indexed": false,
-				"internalType": "bytes",
-				"name": "index",
-				"type": "bytes"
+				"internalType": "uint256",
+				"name": "fee",
+				"type": "uint256"
 			}
 		],
-		"name": "DepositEvent",
+		"name": "Deposit",
 		"type": "event"
 	},
 	{
@@ -64,14 +80,220 @@ let contractABI = [
 				"type": "bytes32"
 			}
 		],
-		"name": "deposit",
+		"name": "depositToEth2",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bytes",
+				"name": "pubkey",
+				"type": "bytes"
+			}
+		],
+		"name": "DepositToEth2",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "repayStake",
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_adminFeeN",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_adminfeeD",
+				"type": "uint256"
+			}
+		],
+		"name": "setAdminFee",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
-		"name": "get_deposit_count",
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "withdrawer",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "Withdrawal",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "adminFeeD",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "adminFeeN",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "depositable",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "depositContractAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "isOwner",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "poolFull",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "pubkeys",
 		"outputs": [
 			{
 				"internalType": "bytes",
@@ -84,12 +306,51 @@ let contractABI = [
 	},
 	{
 		"inputs": [],
-		"name": "get_deposit_root",
+		"name": "u",
 		"outputs": [
 			{
-				"internalType": "bytes32",
+				"internalType": "contract uStakedEth",
 				"name": "",
-				"type": "bytes32"
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "validatorStakesRepayed",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "ValidatorsUnderManagement",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdrawable",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -98,7 +359,7 @@ let contractABI = [
 ]
 let contract
 
-let tokenAddress = "0x6174953260dF549d5f46147c5037ed1F1d6afaAB"//"0xd4CC801D577E6B08A63D8C76097b98F7F2b38fee"//"0x59F9e6E5e495F2fB259963DeC5BA56CFBd5846e7"
+let tokenAddress = "0x6A1B7CB3B460ba517f792FACbb53Af81C6193743"//"0xd4CC801D577E6B08A63D8C76097b98F7F2b38fee"//"0x59F9e6E5e495F2fB259963DeC5BA56CFBd5846e7"
 let tokenABI = [
 	{
 		"inputs": [],
@@ -481,7 +742,10 @@ await contract.withdraw(amount)
 }
 
 async function displayWithdrawable() {
-	let withdrawable = await contract.getWithdrawable(signer._address)
+	let contractBalance = await provider.getBalance(contractAddress)
+	let tokenBalance = await token.balanceOf(signer._address)
+	let totalWithdrawable = await contract.withdrawable()
+	let
 	withdrawable = ethers.utils.parseUnits(withdrawable,decimals)
 	document.getElementById("withdrawableLabel").innerHTML = withdrawable + " ETH"
 }
@@ -500,10 +764,6 @@ async function getDeposited() {
   let deposited = poolSpace.sub(depositable)
   deposited = ethers.utils.formatUnits(deposited,decimals)
   return(deposited)
-}
-
-async function getWithdrawable() {
-
 }
 
 
