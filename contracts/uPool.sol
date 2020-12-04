@@ -6,7 +6,7 @@
  *Submitted for verification at Etherscan.io on 2020-11-18
 */
 
-pragma solidity ^0.6.11;
+pragma solidity ^0.7.5;
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -114,9 +114,9 @@ library SafeMath {
     }
 }
 
-contract uStakeEth {
+contract uStakedEth {
     /// @notice EIP-20 token name for this token
-    string public constant name = "uStake Eth";
+    string public constant name = "uStaked Eth v1";
 
     /// @notice EIP-20 token symbol for this token
     string public constant symbol = "Staked ETH";
@@ -473,7 +473,7 @@ contract ReentrancyGuard {
     }
 }
 
-contract SharedDeposit is Ownable, ReentrancyGuard {
+contract uStakingPool is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeMath for uint;
      /* ========== STATE VARIABLES ========== */
@@ -492,10 +492,15 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
 
     bool public poolFull;
 
-    uStakeEth public u;
+    uStakedEth public u;
+
+    event Deposit(address depositor,uint amount, uint fee);
+    event DepositToEth2(bytes pubkey);
+    event Withdrawal(address withdrawer,uint amount);
+
 
     constructor(uint256 _numValidators,uint256 _adminFeeN, uint256 _adminFeeD) public {
-        u = new uStakeEth();
+        u = new uStakedEth();
 
         adminFeeN = _adminFeeN;
         adminFeeD = _adminFeeD;
@@ -522,37 +527,43 @@ contract SharedDeposit is Ownable, ReentrancyGuard {
         if(depositable==0){
             poolFull = true;
         }
+
+        emit Deposit(msg.sender,value,fee);
     }
 
-    function withdraw(uint256 amount) public nonReentrant {
+    function withdraw() public nonReentrant {
 
-        // Todo : check if deadline has passed or not
-        // make sure there is money in the contract
-        uint amountEth = (address(this).balance).mul(amount).div(withdrawable);
-        withdrawable.sub(amount);
+        uint amountTokens = u.balanceOf(msg.sender);
+        uint amountEth = (address(this).balance).mul(amountTokens).div(withdrawable);
+        withdrawable.sub(amountTokens);
 
-        u.burn(msg.sender, amount);
+        u.burn(msg.sender, amountTokens);
         address payable sender = msg.sender;
         sender.transfer(amountEth);
+
+        emit Withdrawal(msg.sender,amountEth);
     }
 
+    bytes[] public pubkeys;
     // OWNER ONLY FUNCTIONS
     function depositToEth2(bytes calldata pubkey,
         bytes calldata withdrawal_credentials,
         bytes calldata signature,
         bytes32 deposit_data_root) external onlyOwner {
-            require(poolFull, "pool Not Full Yet");
+            require(poolFull, "Pool Not Full Yet");
             uint256 amount = 32e18;
             require(address(this).balance > amount, "Not enough balance"); //need at least 32 ETH
             depositContract.deposit{value: amount}(pubkey, withdrawal_credentials, signature, deposit_data_root);
-            // depositContract.deposit.value(32)(pubkey, withdrawal_credentials, signature, deposit_data_root);
+            pubkeys.push(pubkey);
+            emit DepositToEth2(pubkey);
     }
 
-    function repayStake(uint256 amount, uint numValidatorStakes) public payable onlyOwner{
+    function repayStake(uint256 amount) public payable onlyOwner{
         require(msg.value==amount);
-        require(validatorStakesRepayed+numValidatorStakes<=ValidatorsUnderManagement, "Trying to repay too many validators");
-        withdrawable += numValidatorStakes.mul(32e18);
-        validatorStakesRepayed += numValidatorStakes;
+        require(poolFull, "Pool Not Full Yet");
+        //require(validatorStakesRepayed+numValidatorStakes<=ValidatorsUnderManagement, "Trying to repay too many validators");
+        withdrawable += amount;
+        validatorStakesRepayed = ValidatorsUnderManagement;
     }
 
     function setAdminFee(uint256 _adminFeeN,uint256 _adminfeeD) external onlyOwner {
