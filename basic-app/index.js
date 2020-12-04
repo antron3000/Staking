@@ -2,7 +2,7 @@ let provider
 let signer
 
 
-let contractAddress = "0xEa3AB61d7c8464a0b2d697838Fd24dc7510aF004"//"0x498E7A298be34df2D5F4fcaE235E394cfd628b4c"//"0x9FEC7Dc40a3167d6971B0cFAb48841e00dBE2c26"
+let contractAddress = "0xDe793304ca1E75c096C0c41006C1DDFF6391a6e7"//"0x498E7A298be34df2D5F4fcaE235E394cfd628b4c"//"0x9FEC7Dc40a3167d6971B0cFAb48841e00dBE2c26"
 let contractABI = [
 	{
 		"inputs": [],
@@ -359,7 +359,7 @@ let contractABI = [
 ]
 let contract
 
-let tokenAddress = "0x6A1B7CB3B460ba517f792FACbb53Af81C6193743"//"0xd4CC801D577E6B08A63D8C76097b98F7F2b38fee"//"0x59F9e6E5e495F2fB259963DeC5BA56CFBd5846e7"
+let tokenAddress = "0xF63146C55316C3d1e4E20b323ADF3410c6740aEc"//"0xd4CC801D577E6B08A63D8C76097b98F7F2b38fee"//"0x59F9e6E5e495F2fB259963DeC5BA56CFBd5846e7"
 let tokenABI = [
 	{
 		"inputs": [],
@@ -736,18 +736,23 @@ async function deposit() {
 }
 
 async function withdraw() {
-  let amount = await token.balanceOf(signer._address);
-
-await contract.withdraw(amount)
+	await contract.withdraw()
 }
 
 async function displayWithdrawable() {
 	let contractBalance = await provider.getBalance(contractAddress)
 	let tokenBalance = await token.balanceOf(signer._address)
 	let totalWithdrawable = await contract.withdrawable()
-	let
-	withdrawable = ethers.utils.parseUnits(withdrawable,decimals)
-	document.getElementById("withdrawableLabel").innerHTML = withdrawable + " ETH"
+
+	let withdrawable
+	if(totalWithdrawable.eq(0)){
+		withdrawable = ethers.utils.parseEther("0")
+	} else {
+		withdrawable = contractBalance.mul(tokenBalance).div(totalWithdrawable)
+	}
+
+	withdrawable = ethers.utils.formatEther(withdrawable)
+	document.getElementById("withdrawableLabel").innerHTML = withdrawable + " ETH Withdrawable"
 }
 
 async function getDepositable() {

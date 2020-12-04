@@ -152,7 +152,7 @@ contract uStakedEth {
     /**
      * @notice Construct a new token
      */
-    constructor() public {
+    constructor() {
         minter = msg.sender;
         emit MinterChanged(address(0), minter);
     }
@@ -379,7 +379,7 @@ contract Ownable {
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
-    constructor () internal {
+    constructor () {
         _owner = msg.sender;
         emit OwnershipTransferred(address(0), _owner);
     }
@@ -452,7 +452,7 @@ contract ReentrancyGuard {
     /// @dev counter to allow mutex lock with only one SSTORE operation
     uint256 private _guardCounter;
 
-    constructor () internal {
+    constructor () {
         // The counter starts at one to prevent changing it from zero to a non-zero
         // value, which is a more expensive operation.
         _guardCounter = 1;
@@ -473,7 +473,7 @@ contract ReentrancyGuard {
     }
 }
 
-contract uStakingPool is Ownable, ReentrancyGuard {
+contract uPool is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeMath for uint;
      /* ========== STATE VARIABLES ========== */
@@ -499,7 +499,7 @@ contract uStakingPool is Ownable, ReentrancyGuard {
     event Withdrawal(address withdrawer,uint amount);
 
 
-    constructor(uint256 _numValidators,uint256 _adminFeeN, uint256 _adminFeeD) public {
+    constructor(uint256 _numValidators,uint256 _adminFeeN, uint256 _adminFeeD) {
         u = new uStakedEth();
 
         adminFeeN = _adminFeeN;
@@ -562,7 +562,7 @@ contract uStakingPool is Ownable, ReentrancyGuard {
         require(msg.value==amount);
         require(poolFull, "Pool Not Full Yet");
         //require(validatorStakesRepayed+numValidatorStakes<=ValidatorsUnderManagement, "Trying to repay too many validators");
-        withdrawable += amount;
+        withdrawable += ValidatorsUnderManagement*32e18;
         validatorStakesRepayed = ValidatorsUnderManagement;
     }
 
