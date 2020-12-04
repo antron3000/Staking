@@ -152,7 +152,7 @@ contract uStakedEth {
     /**
      * @notice Construct a new token
      */
-    constructor() public {
+    constructor() {
         minter = msg.sender;
         emit MinterChanged(address(0), minter);
     }
@@ -379,7 +379,7 @@ contract Ownable {
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
-    constructor () internal {
+    constructor () {
         _owner = msg.sender;
         emit OwnershipTransferred(address(0), _owner);
     }
@@ -452,7 +452,7 @@ contract ReentrancyGuard {
     /// @dev counter to allow mutex lock with only one SSTORE operation
     uint256 private _guardCounter;
 
-    constructor () internal {
+    constructor () {
         // The counter starts at one to prevent changing it from zero to a non-zero
         // value, which is a more expensive operation.
         _guardCounter = 1;
@@ -473,7 +473,7 @@ contract ReentrancyGuard {
     }
 }
 
-contract uStakingPool is Ownable, ReentrancyGuard {
+contract uPool is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeMath for uint;
      /* ========== STATE VARIABLES ========== */
@@ -481,11 +481,12 @@ contract uStakingPool is Ownable, ReentrancyGuard {
 
     IDepositContract depositContract;
 
-    uint256 public ValidatorsUnderManagement;
-    uint256 public validatorStakesRepayed;
+    uint public ValidatorsUnderManagement;
+    uint public validatorStakesRepayed;
 
-    uint256 public adminFeeN; //admin Fee Numerator
-    uint256 public adminFeeD; //admin Fee Denominator
+    uint public adminFeeN; //admin Fee Numerator
+    uint public adminFeeD; //admin Fee Denominator
+    uint public collectedFees;
 
     uint public depositable;
     uint public withdrawable;
@@ -499,7 +500,7 @@ contract uStakingPool is Ownable, ReentrancyGuard {
     event Withdrawal(address withdrawer,uint amount);
 
 
-    constructor(uint256 _numValidators,uint256 _adminFeeN, uint256 _adminFeeD) public {
+    constructor(uint256 _numValidators,uint256 _adminFeeN, uint256 _adminFeeD) {
         u = new uStakedEth();
 
         adminFeeN = _adminFeeN;
@@ -520,15 +521,30 @@ contract uStakingPool is Ownable, ReentrancyGuard {
         uint value = msg.value.sub(fee);
 
         u.mint(msg.sender, value);
-        u.mint(owner(),fee);
+        collectedFees += fee;
 
         depositable = depositable.sub(msg.value);
 
         if(depositable==0){
             poolFull = true;
+            u.mint(owner(),collectedFees);
         }
 
         emit Deposit(msg.sender,value,fee);
+    }
+
+    function cancelDeposit() public nonReentrant {
+        require(!poolFull, "Deposits locked in");
+        uint d = u.balanceOf(msg.sender);
+        require(d>0,"You have no staked ETH");
+
+        uint D = d**3/(d**2-((d**2*adminFeeN)/adminFeeD));
+
+        uint fee = D.sub(d);
+        u.burn(msg.sender,d);
+        collectedFees.sub(fee);
+        depositable.add(D);
+        msg.sender.transfer(D);
     }
 
     function withdraw() public nonReentrant {
@@ -562,7 +578,7 @@ contract uStakingPool is Ownable, ReentrancyGuard {
         require(msg.value==amount);
         require(poolFull, "Pool Not Full Yet");
         //require(validatorStakesRepayed+numValidatorStakes<=ValidatorsUnderManagement, "Trying to repay too many validators");
-        withdrawable += amount;
+        withdrawable += ValidatorsUnderManagement*32e18;
         validatorStakesRepayed = ValidatorsUnderManagement;
     }
 

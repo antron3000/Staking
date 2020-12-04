@@ -2,15 +2,8 @@ let provider
 let signer
 
 
-let contractAddress = "0xEa3AB61d7c8464a0b2d697838Fd24dc7510aF004"//"0x498E7A298be34df2D5F4fcaE235E394cfd628b4c"//"0x9FEC7Dc40a3167d6971B0cFAb48841e00dBE2c26"
+let contractAddress = "0x5aE7cefd41EeB139fBd7be138cAe3dF061c5b89a"//"0x498E7A298be34df2D5F4fcaE235E394cfd628b4c"//"0x9FEC7Dc40a3167d6971B0cFAb48841e00dBE2c26"
 let contractABI = [
-	{
-		"inputs": [],
-		"name": "deposit",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
 	{
 		"inputs": [
 			{
@@ -58,34 +51,6 @@ let contractABI = [
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "bytes",
-				"name": "pubkey",
-				"type": "bytes"
-			},
-			{
-				"internalType": "bytes",
-				"name": "withdrawal_credentials",
-				"type": "bytes"
-			},
-			{
-				"internalType": "bytes",
-				"name": "signature",
-				"type": "bytes"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "deposit_data_root",
-				"type": "bytes32"
-			}
-		],
-		"name": "depositToEth2",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -118,64 +83,6 @@ let contractABI = [
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "repayStake",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_adminFeeN",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_adminfeeD",
-				"type": "uint256"
-			}
-		],
-		"name": "setAdminFee",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -193,6 +100,19 @@ let contractABI = [
 		],
 		"name": "Withdrawal",
 		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "ValidatorsUnderManagement",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"inputs": [],
@@ -222,7 +142,14 @@ let contractABI = [
 	},
 	{
 		"inputs": [],
-		"name": "depositable",
+		"name": "cancelDeposit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "collectedFees",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -235,12 +162,60 @@ let contractABI = [
 	},
 	{
 		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "depositContractAddress",
 		"outputs": [
 			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "pubkey",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes",
+				"name": "withdrawal_credentials",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes",
+				"name": "signature",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "deposit_data_root",
+				"type": "bytes32"
+			}
+		],
+		"name": "depositToEth2",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "depositable",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -306,6 +281,57 @@ let contractABI = [
 	},
 	{
 		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "repayStake",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_adminFeeN",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_adminfeeD",
+				"type": "uint256"
+			}
+		],
+		"name": "setAdminFee",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "u",
 		"outputs": [
 			{
@@ -332,15 +358,9 @@ let contractABI = [
 	},
 	{
 		"inputs": [],
-		"name": "ValidatorsUnderManagement",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -359,7 +379,7 @@ let contractABI = [
 ]
 let contract
 
-let tokenAddress = "0x6A1B7CB3B460ba517f792FACbb53Af81C6193743"//"0xd4CC801D577E6B08A63D8C76097b98F7F2b38fee"//"0x59F9e6E5e495F2fB259963DeC5BA56CFBd5846e7"
+let tokenAddress //"0xd4CC801D577E6B08A63D8C76097b98F7F2b38fee"//"0x59F9e6E5e495F2fB259963DeC5BA56CFBd5846e7"
 let tokenABI = [
 	{
 		"inputs": [],
@@ -700,6 +720,7 @@ async function init() {
   let accounts = await provider.listAccounts()
   signer = await provider.getSigner(accounts[0])
   contract = new ethers.Contract(contractAddress,contractABI,signer)
+	tokenAddress = contract.u()
   token = new ethers.Contract(tokenAddress,tokenABI,signer)
   decimals = await token.decimals()
   symbol = await token.symbol()
@@ -732,22 +753,30 @@ async function deposit() {
   }
 
   await contract.deposit({value:amount})
+}
 
+async function cancelDeposit() {
+	await contract.cancelDeposit({gasLimit:100000})
 }
 
 async function withdraw() {
-  let amount = await token.balanceOf(signer._address);
-
-await contract.withdraw(amount)
+	await contract.withdraw()
 }
 
 async function displayWithdrawable() {
 	let contractBalance = await provider.getBalance(contractAddress)
 	let tokenBalance = await token.balanceOf(signer._address)
 	let totalWithdrawable = await contract.withdrawable()
-	let
-	withdrawable = ethers.utils.parseUnits(withdrawable,decimals)
-	document.getElementById("withdrawableLabel").innerHTML = withdrawable + " ETH"
+
+	let withdrawable
+	if(totalWithdrawable.eq(0)){
+		withdrawable = ethers.utils.parseEther("0")
+	} else {
+		withdrawable = contractBalance.mul(tokenBalance).div(totalWithdrawable)
+	}
+
+	withdrawable = ethers.utils.formatEther(withdrawable)
+	document.getElementById("withdrawableLabel").innerHTML = withdrawable + " ETH Withdrawable"
 }
 
 async function getDepositable() {
@@ -801,6 +830,10 @@ async function displayContractInfo() {
 		document.getElementById("poolFull").innerHTML = "There is still space in the pool"
 	}
 
+}
 
-
+async function displayValidatorStatus() {
+	let pubkey1
+	let pubkey2
+	let pubkey3
 }

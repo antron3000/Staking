@@ -39,9 +39,14 @@
 
 
     <input class = "input" id="amountToDeposit" placeholder = "0.0"></input><br><button class = "button" onclick="deposit()">DEPOSIT</button> <br>
-    <button class = "button" onclick="populateMaxDeposit()">MAX</button> <br><br><br>
-    <button class = "button" onclick="withdraw()">WITHDRAW</button><br>
-    <label class = "label" id = "withdrawableLabel"></label><br>
+    <button class = "button" onclick="populateMaxDeposit()">MAX</button> <br>
+    <button class = "button" onclick="cancelDeposit()">CANCEL DEPOSIT</button> <br><br><br>
+
+    <h3>
+      <label class = "label" id = "withdrawableLabel"></label>
+    </h3>
+    <button class = "button" onclick="withdraw()">WITHDRAW</button>
+
 
     <br><br>
 </div>
@@ -60,6 +65,15 @@
 
 
     </h3>
+</div>
+
+<div>
+  <h2>Validators</h2>
+  <h3>
+    <label class = "label" id="validator1"></label><br>
+    <label class = "label" id="validator2"></label><br>
+    <label class = "label" id="validator3a"></label><br>
+  </h3>
 </div>
 
 
