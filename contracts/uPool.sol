@@ -571,3 +571,20 @@ contract uPool is Ownable, ReentrancyGuard {
         adminFeeD = _adminfeeD;
     }
 }
+contract stakingDepositFactory{
+    address[] public StakingPools;
+    event NewStakingPool(address p,address creator,uint Validators,uint FeeD,uint FeeN);
+    constructor() public {}
+
+    function creatStakingPool(uint256 _numValidators,uint256 _adminFeeD, uint256 _adminFeeN) public returns(address){
+        address pool=address(new uPool(_numValidators,_adminFeeD,_adminFeeN));
+        StakingPools.push(pool);
+        emit NewStakingPool(pool,msg.sender,_numValidators,_adminFeeD, _adminFeeN);
+        return pool;
+    }
+    function getStakingPools() public view returns(address[] memory){
+        return StakingPools;
+    }
+
+
+}
