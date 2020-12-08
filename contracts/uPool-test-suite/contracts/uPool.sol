@@ -1,10 +1,4 @@
-/**
- *Submitted for verification at Etherscan.io on 2020-11-19
-*/
 
-/**
- *Submitted for verification at Etherscan.io on 2020-11-18
-*/
 
 pragma solidity ^0.7.5;
 
@@ -501,7 +495,7 @@ contract uPool is Ownable, ReentrancyGuard {
 
 
     constructor(uint256 _numValidators,uint256 _adminFeeN, uint256 _adminFeeD) {
-        require(adminFeeD<1e18,"Denominator does not need to exceed 10^18 wei")
+        require(adminFeeD<1e18,"Denominator does not need to exceed 10^18 wei");
         uSE = new uStakedEth();
 
         adminFeeN = _adminFeeN;
@@ -529,6 +523,7 @@ contract uPool is Ownable, ReentrancyGuard {
         if(depositable==0){
             poolFull = true;
             uSE.mint(owner(),collectedFees);
+            collectedFees = 0;
         }
 
         emit Deposit(msg.sender,value,fee);
@@ -539,7 +534,7 @@ contract uPool is Ownable, ReentrancyGuard {
         uint d = uSE.balanceOf(msg.sender);
         require(d>0,"You have no staked ETH");
 
-        uint D = d**3/(d**2-((d**2*adminFeeN)/adminFeeD));
+        uint D = d**4/(d**3-((d**3*adminFeeN)/adminFeeD));
 
         uint fee = D.sub(d);
         uSE.burn(msg.sender,d);
