@@ -32,15 +32,15 @@ contract('uPool', (accounts) => {
     assert.equal(totalSupply,990000000000000000,"total Token Supply is 0.99 ETH")
     assert.equal(balance,totalSupply.add(collectedFees),"Contract ETH Balance should equal contract token total supply plus collected fees")
   });
-  it('account 2 should depsoit 1.2345678901234 ETH into uPool', async () => {
-    await uPoolInstance.deposit({ from: accounts[2], value:1234567890123400000 });
+  it('account 2 should depsoit 1.234567890123456789 ETH into uPool', async () => {
+    await uPoolInstance.deposit({ from: accounts[2], value:1234567890123456789 });
   });
-  it('uPool should have a balance of 2.2345678901234 ETH, balance should equal total staked ETH + total collected Fees', async () => {
+  it('uPool should have a balance of 2.234567890123456789 ETH, balance should equal total staked ETH + total collected Fees', async () => {
     const balance = await web3.eth.getBalance(uPoolInstance.address);
     const collectedFees = await uPoolInstance.collectedFees()
     const totalSupply = await uStakedEthInstance.totalSupply()
-    assert.equal(collectedFees,22345678901234000,"collected Fees should be 0.022345678901234 ETH")
-    assert.equal(balance, 2234567890123400000, "uPool has 2.2345678901234 ETH");
+    assert.equal(collectedFees,22345678901234567,"collected Fees should be 0.022345678901234 ETH")
+    assert.equal(balance, 2234567890123456789, "uPool has 2.2345678901234 ETH");
     assert.equal(balance,totalSupply.add(collectedFees),"Contract ETH Balance should equal contract token total supply plus collected fees")
   });
   it('account 2 should cancel deposit into uPool', async () => {
