@@ -1,4 +1,10 @@
+/**
+ *Submitted for verification at Etherscan.io on 2020-11-19
+*/
 
+/**
+ *Submitted for verification at Etherscan.io on 2020-11-18
+*/
 
 pragma solidity ^0.7.5;
 
@@ -534,7 +540,7 @@ contract uPool is Ownable, ReentrancyGuard {
         uint d = uSE.balanceOf(msg.sender);
         require(d>0,"You have no staked ETH");
 
-        uint D = d**4/(d**3-((d**3*adminFeeN)/adminFeeD));
+        uint D = d**3/(d**2-((d**2*adminFeeN)/adminFeeD));
 
         uint fee = D.sub(d);
         uSE.burn(msg.sender,d);
