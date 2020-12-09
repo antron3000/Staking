@@ -1,2 +1,2 @@
-truffle compile
-truffle test
+- truffle compile
+- truffle test
