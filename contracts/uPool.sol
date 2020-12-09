@@ -481,18 +481,19 @@ contract uPool is Ownable, ReentrancyGuard {
 
     IDepositContract depositContract;
 
-    uint256 public ValidatorsUnderManagement;
-    uint256 public validatorStakesRepayed;
+    uint public ValidatorsUnderManagement;
+    uint public validatorStakesRepayed;
 
-    uint256 public adminFeeN; //admin Fee Numerator
-    uint256 public adminFeeD; //admin Fee Denominator
+    uint public adminFeeN; //admin Fee Numerator
+    uint public adminFeeD; //admin Fee Denominator
+    uint public collectedFees;
 
     uint public depositable;
     uint public withdrawable;
 
     bool public poolFull;
 
-    uStakedEth public u;
+    uStakedEth public uSE;
 
     event Deposit(address depositor,uint amount, uint fee);
     event DepositToEth2(bytes pubkey);
@@ -500,7 +501,8 @@ contract uPool is Ownable, ReentrancyGuard {
 
 
     constructor(uint256 _numValidators,uint256 _adminFeeN, uint256 _adminFeeD) {
-        u = new uStakedEth();
+        require(adminFeeD<1e18,"Denominator does not need to exceed 10^18 wei")
+        uSE = new uStakedEth();
 
         adminFeeN = _adminFeeN;
         adminFeeD = _adminFeeD;
@@ -519,25 +521,40 @@ contract uPool is Ownable, ReentrancyGuard {
 
         uint value = msg.value.sub(fee);
 
-        u.mint(msg.sender, value);
-        u.mint(owner(),fee);
+        uSE.mint(msg.sender, value);
+        collectedFees = collectedFees.add(fee);
 
         depositable = depositable.sub(msg.value);
 
         if(depositable==0){
             poolFull = true;
+            uSE.mint(owner(),collectedFees);
         }
 
         emit Deposit(msg.sender,value,fee);
     }
 
+    function cancelDeposit() public nonReentrant {
+        require(!poolFull, "Deposits locked in");
+        uint d = uSE.balanceOf(msg.sender);
+        require(d>0,"You have no staked ETH");
+
+        uint D = d**3/(d**2-((d**2*adminFeeN)/adminFeeD));
+
+        uint fee = D.sub(d);
+        uSE.burn(msg.sender,d);
+        collectedFees = collectedFees.sub(fee);
+        depositable = depositable.add(D);
+        msg.sender.transfer(D);
+    }
+
     function withdraw() public nonReentrant {
 
-        uint amountTokens = u.balanceOf(msg.sender);
+        uint amountTokens = uSE.balanceOf(msg.sender);
         uint amountEth = (address(this).balance).mul(amountTokens).div(withdrawable);
         withdrawable.sub(amountTokens);
 
-        u.burn(msg.sender, amountTokens);
+        uSE.burn(msg.sender, amountTokens);
         address payable sender = msg.sender;
         sender.transfer(amountEth);
 
@@ -565,12 +582,7 @@ contract uPool is Ownable, ReentrancyGuard {
         withdrawable += ValidatorsUnderManagement*32e18;
         validatorStakesRepayed = ValidatorsUnderManagement;
     }
-
-    function setAdminFee(uint256 _adminFeeN,uint256 _adminfeeD) external onlyOwner {
-        adminFeeN = _adminFeeN;
-        adminFeeD = _adminfeeD;
-    }
-}
+  }
 contract stakingDepositFactory{
     address[] public StakingPools;
     event NewStakingPool(address p,address creator,uint Validators,uint FeeD,uint FeeN);
