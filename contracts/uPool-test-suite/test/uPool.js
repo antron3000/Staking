@@ -3,6 +3,8 @@ const uStakedEth = artifacts.require("uStakedEth");
 let uPoolInstance
 let uStakedEthInstance
 let accounts
+let BN = web3.utils.BN;
+
 contract('uPool', (accounts) => {
   it('should deploy uPool with 0 balance', async () => {
     uPoolInstance = await uPool.new(1,1,100)
@@ -33,21 +35,21 @@ contract('uPool', (accounts) => {
     assert.equal(balance,totalSupply.add(collectedFees),"Contract ETH Balance should equal contract token total supply plus collected fees")
   });
   it('account 2 should depsoit 1.234567890123456789 ETH into uPool', async () => {
-    await uPoolInstance.deposit({ from: accounts[2], value:1234567890123456789 });
+    await uPoolInstance.deposit({ from: accounts[2], value:1234567890123400000 });
   });
-  it('uPool should have a balance of 2.234567890123456789 ETH, balance should equal total staked ETH + total collected Fees', async () => {
+  it('uPool should have a balance of 2.2345678901234 ETH, balance should equal total staked ETH + total collected Fees', async () => {
     const balance = await web3.eth.getBalance(uPoolInstance.address);
     const collectedFees = await uPoolInstance.collectedFees()
     const totalSupply = await uStakedEthInstance.totalSupply()
-    assert.equal(collectedFees,22345678901234567,"collected Fees should be 0.022345678901234 ETH")
-    assert.equal(balance, 2234567890123456789, "uPool has 2.2345678901234 ETH");
+    assert.equal(collectedFees,22345678901234000,"collected Fees should be 0.022345678901234567 ETH")
+    assert.equal(balance, 2234567890123400000, "uPool has 2.234567890123456789 ETH");
     assert.equal(balance,totalSupply.add(collectedFees),"Contract ETH Balance should equal contract token total supply plus collected fees")
   });
   it('account 2 should cancel deposit into uPool', async () => {
     await uPoolInstance.cancelDeposit({ from: accounts[2]});
   });
   it('uPool should have 31 ETH left depositable', async () => {
-    const balance = await web3.eth.getBalance(uPoolInstance.address);
+    let balance = await web3.eth.getBalance(uPoolInstance.address);
     assert.equal(balance, 1000000000000000000, "uPool has 1 ETH");
 
     let depositable = await uPoolInstance.depositable();
@@ -57,54 +59,33 @@ contract('uPool', (accounts) => {
     await uPoolInstance.deposit({ from: accounts[3], value:31000000000000000000 });
   });
   it('uPool should have a balance of 32 ETH, balance should equal total staked ETH + total collected Fees', async () => {
-    const balance = await web3.eth.getBalance(uPoolInstance.address);
-    const collectedFees = await uPoolInstance.collectedFees()
-    const totalSupply = await uStakedEthInstance.totalSupply()
+    let balance = await web3.eth.getBalance(uPoolInstance.address);
+    let collectedFees = await uPoolInstance.collectedFees()
+    let totalSupply = await uStakedEthInstance.totalSupply()
     assert.equal(balance, 32000000000000000000, "uPool has 32 ETH");
     assert.equal(balance,totalSupply.add(collectedFees),"Contract ETH Balance should equal contract token total supply plus collected fees")
+    let poolFull = await uPoolInstance.poolFull()
+    assert.equal(poolFull, true, "Pool is Full");
+  });
+  it('pool owner should repay stake', async () => {
+    await uPoolInstance.repayStake(new BN("32000000000000000000"),{from: accounts[0], value:32000000000000000000});
+  });
+  it('Account 0,1 and Account 3 should withdraw stake', async () => {
+    await uPoolInstance.withdraw({from: accounts[0]});
+    await uPoolInstance.withdraw({from: accounts[1]});
+    await uPoolInstance.withdraw({from: accounts[3]});
   });
 
+  it('Account 1 balance should be 101 ETH, Account 2 Balance should be 132 ETH', async () => {
+    //let account1Balance = web3.eth.getBalance(accounts[1])
+    //let account3Balance = web3.eth.getBalance(accounts[3])
+    //assert.equal(account1Balance,101000000000000000000, "account1 balance should be 101 ETH")
+    //assert.equal(account3Balance,new BN(132000000000000000000), "account3 balance should be 132 ETH")
+  });
 
-  // it('uPool should have a balance of 2.234567890123456789 ETH', async () => {
-  //   const balance = await web3.eth.getBalance(uPoolInstance.address);
-  //   assert.equal(balance.valueOf(), 2234567890123456789, "uPool has 1.234567890123456789 ETH");
-  // });
-  // it('account 2 should depsoit cancel deposit', async () => {
-  //   await uPoolInstance.cancelDeposit({ from: accounts[2]});
-  // });
-  // it('uPool should have a balance of 1 ETH', async () => {
-  //   const balance = await web3.eth.getBalance(uPoolInstance.address);
-  //   assert.equal(balance.valueOf(), 1000000000000000000, "uPool has 1 ETH");
-  // });
+  it('Token Supply should be 0', async () => {
 
-
-
-
-
-
-
-
-  // it('should send coin correctly', async () => {
-  //   const metaCoinInstance = await MetaCoin.deployed();
-  //
-  //   // Setup 2 accounts.
-  //   const accountOne = accounts[0];
-  //   const accountTwo = accounts[1];
-  //
-  //   // Get initial balances of first and second account.
-  //   const accountOneStartingBalance = (await metaCoinInstance.getBalance.call(accountOne)).toNumber();
-  //   const accountTwoStartingBalance = (await metaCoinInstance.getBalance.call(accountTwo)).toNumber();
-  //
-  //   // Make transaction from first account to second.
-  //   const amount = 10;
-  //   await metaCoinInstance.sendCoin(accountTwo, amount, { from: accountOne });
-  //
-  //   // Get balances of first and second account after the transactions.
-  //   const accountOneEndingBalance = (await metaCoinInstance.getBalance.call(accountOne)).toNumber();
-  //   const accountTwoEndingBalance = (await metaCoinInstance.getBalance.call(accountTwo)).toNumber();
-  //
-  //
-  //   assert.equal(accountOneEndingBalance, accountOneStartingBalance - amount, "Amount wasn't correctly taken from the sender");
-  //   assert.equal(accountTwoEndingBalance, accountTwoStartingBalance + amount, "Amount wasn't correctly sent to the receiver");
-  // });
+    let totalSupply = await uStakedEthInstance.totalSupply()
+    assert.equal(totalSupply,0, "token Supply should be 0")
+  });
 });
